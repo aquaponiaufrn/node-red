@@ -1,0 +1,125 @@
+[
+    {
+        "id": "f414a8fd0d8546e1",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6dcdbcdc4c7ea748",
+        "type": "inject",
+        "z": "f414a8fd0d8546e1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 280,
+        "y": 160,
+        "wires": [
+            [
+                "46d644e16216a279"
+            ]
+        ]
+    },
+    {
+        "id": "46d644e16216a279",
+        "type": "function",
+        "z": "f414a8fd0d8546e1",
+        "name": "function 1",
+        "func": "const sensores = [\n  { id: \"066899a2-7b88-4187-84de-e4d13551a954\", tipo: \"condutividade\" },\n  { id: \"2874c0c1-da70-4856-a8c8-4f5e98a67215\", tipo: \"umidade_ar\" },\n  { id: \"3a65d5ad-95fc-4e84-833e-0cb27e9702ee\", tipo: \"nivel_agua\" },\n  { id: \"5ec5bc8d-8e68-4d6f-8641-e5220b300000\", tipo: \"temperatura_agua\" },\n  { id: \"6b4b2384-e6f7-48d3-aec6-1beca4539a01\", tipo: \"temperatura_ambiente\" },\n  { id: \"42619cf4-297b-4132-abea-e7e8cb21dcd5\", tipo: \"umidade_solo\" },\n  { id: \"df52ffba-5deb-4b21-b695-b80f14dce78d\", tipo: \"ph\" },\n  { id: \"e035f75e-5df8-40dd-b983-9b9c42d06385\", tipo: \"oxigenio\" },\n  { id: \"f753ad8a-5725-46ba-ba6e-f879a7c66eeb\", tipo: \"fluxo_agua\" }\n];\n\nfunction gerarValor(tipo) {\n  if (tipo === \"condutividade\") return 1000 + Math.random() * 10;\n  if (tipo === \"umidade_ar\") return 80 + Math.random() * 3;\n  if (tipo === \"nivel_agua\") return 70 + Math.random() * 3;\n  if (tipo === \"temperatura_agua\") return 24 + Math.random() * 4;\n  if (tipo === \"temperatura_ambiente\") return 28 + Math.random() * 4;\n  if (tipo === \"umidade_solo\") return 70 + Math.random() * 4;\n  if (tipo === \"ph\") return 6.5 + Math.random() * 0.5;\n  if (tipo === \"oxigenio\") return 6 + Math.random() * 2;\n  if (tipo === \"fluxo_agua\") return 8 + Math.random() * 2;\n}\n\n// cria múltiplas mensagens\nlet msgs = sensores.map(sensor => {\n    return {\n        payload: {\n            sensor_id: sensor.id,\n            valor: Number(gerarValor(sensor.tipo).toFixed(2)),\n            timestamp: new Date().toISOString()\n        }\n    };\n});\n\nreturn [msgs];",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 160,
+        "wires": [
+            [
+                "b6860c0b0f626d49"
+            ]
+        ]
+    },
+    {
+        "id": "b6860c0b0f626d49",
+        "type": "http request",
+        "z": "f414a8fd0d8546e1",
+        "name": "",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://rcdzlyzftmxhbzrwjkve.supabase.co/rest/v1/leituras",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "other",
+                "keyValue": "apikey",
+                "valueType": "other",
+                "valueValue": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjZHpseXpmdG14aGJ6cndqa3ZlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjcxOTU3NSwiZXhwIjoyMDkyMjk1NTc1fQ.4V-Bn_fe8-xtSWE1bj1UcPN2MAcW3hX_f3cUTfOXVfg"
+            },
+            {
+                "keyType": "Authorization",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjZHpseXpmdG14aGJ6cndqa3ZlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NjcxOTU3NSwiZXhwIjoyMDkyMjk1NTc1fQ.4V-Bn_fe8-xtSWE1bj1UcPN2MAcW3hX_f3cUTfOXVfg"
+            },
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "other",
+                "valueValue": "application/json"
+            },
+            {
+                "keyType": "other",
+                "keyValue": "Prefer",
+                "valueType": "other",
+                "valueValue": "return=minimal"
+            }
+        ],
+        "x": 720,
+        "y": 160,
+        "wires": [
+            [
+                "206abeda6d1e4606"
+            ]
+        ]
+    },
+    {
+        "id": "206abeda6d1e4606",
+        "type": "debug",
+        "z": "f414a8fd0d8546e1",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 300,
+        "wires": []
+    }
+]
